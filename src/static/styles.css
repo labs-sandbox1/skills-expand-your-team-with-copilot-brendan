@@ -704,7 +704,7 @@ footer {
 }
 
 .category-group-header {
-  color: white;
+  color: var(--primary-text);
   padding: 10px 15px;
   border-radius: 5px;
   margin-bottom: 12px;
@@ -714,6 +714,27 @@ footer {
   align-items: center;
   gap: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Category-specific header colors */
+.category-group-header.sports {
+  background-color: #2e7d32;
+}
+
+.category-group-header.arts {
+  background-color: #7b1fa2;
+}
+
+.category-group-header.academic {
+  background-color: #1565c0;
+}
+
+.category-group-header.community {
+  background-color: #e65100;
+}
+
+.category-group-header.technology {
+  background-color: #3949ab;
 }
 
 .category-group-count {

@@ -512,8 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Create category header
         const groupHeader = document.createElement("div");
-        groupHeader.className = "category-group-header";
-        groupHeader.style.backgroundColor = categoryInfo.textColor;
+        groupHeader.className = `category-group-header ${category}`;
         groupHeader.innerHTML = `
           <span>${categoryInfo.label}</span>
           <span class="category-group-count">${groupedByCategory[category].length}</span>
