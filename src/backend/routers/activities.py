@@ -8,6 +8,9 @@ from typing import Dict, Any, Optional, List
 
 from ..database import activities_collection, teachers_collection
 
+# Constants
+DIFFICULTY_UNIVERSAL = "All"
+
 router = APIRouter(
     prefix="/activities",
     tags=["activities"]
@@ -42,7 +45,7 @@ def get_activities(
         query["schedule_details.end_time"] = {"$lte": end_time}
     
     if difficulty:
-        if difficulty.lower() == "all":
+        if difficulty == DIFFICULTY_UNIVERSAL:
             # "All" means activities with no difficulty specified
             query["difficulty"] = {"$exists": False}
         else:
