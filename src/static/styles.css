@@ -803,7 +803,8 @@ footer {
 }
 
 #copy-link-button:hover {
-  background-color: #1e5d22;
+  background-color: #1b5e20;
+  filter: brightness(0.9);
 }
 
 #copy-success-message {

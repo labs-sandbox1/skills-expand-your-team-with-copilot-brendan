@@ -568,7 +568,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
-        <button class="share-button" data-activity="${name}" data-description="${details.description.replace(/"/g, '&quot;')}" data-schedule="${formattedSchedule.replace(/"/g, '&quot;')}" title="Share this activity">
+        <button class="share-button" title="Share this activity">
           📤 Share
         </button>
       </div>
@@ -592,11 +592,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Add click handler for share button
     const shareButton = activityCard.querySelector(".share-button");
-    shareButton.addEventListener("click", (event) => {
-      const activityName = event.target.dataset.activity;
-      const activityDescription = event.target.dataset.description;
-      const activitySchedule = event.target.dataset.schedule;
-      openShareModal(activityName, activityDescription, activitySchedule);
+    shareButton.addEventListener("click", () => {
+      openShareModal(name, details.description, formattedSchedule);
     });
 
     activitiesList.appendChild(activityCard);
@@ -870,6 +867,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Open share modal
   function openShareModal(activityName, activityDescription, activitySchedule) {
     // Create share URL (using current page URL as base)
+    // Note: The activity parameter is added for reference in shared links
+    // The application will still display all activities regardless of this parameter
     const currentUrl = window.location.href.split('?')[0];
     const shareUrl = `${currentUrl}?activity=${encodeURIComponent(activityName)}`;
     const shareText = `Check out this activity at Mergington High School: ${activityName} - ${activityDescription}`;
@@ -952,19 +951,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const copySuccessMessage = document.getElementById('copy-success-message');
         
         try {
-          await navigator.clipboard.writeText(linkInput.value);
-          copySuccessMessage.classList.remove('hidden');
-          setTimeout(() => {
-            copySuccessMessage.classList.add('hidden');
-          }, 2000);
+          // Try modern Clipboard API first
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(linkInput.value);
+            copySuccessMessage.classList.remove('hidden');
+            setTimeout(() => {
+              copySuccessMessage.classList.add('hidden');
+            }, 2000);
+          } else {
+            // Fallback for older browsers or non-secure contexts
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999); // For mobile devices
+            const successful = document.execCommand('copy');
+            if (successful) {
+              copySuccessMessage.classList.remove('hidden');
+              setTimeout(() => {
+                copySuccessMessage.classList.add('hidden');
+              }, 2000);
+            }
+          }
         } catch (err) {
-          // Fallback for older browsers
-          linkInput.select();
-          document.execCommand('copy');
-          copySuccessMessage.classList.remove('hidden');
-          setTimeout(() => {
-            copySuccessMessage.classList.add('hidden');
-          }, 2000);
+          console.error('Failed to copy link:', err);
+          // Silently fail - user can still manually select and copy
         }
       });
     }
@@ -1002,7 +1010,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (shareLink) {
-      window.open(shareLink, '_blank', 'width=600,height=400');
+      const shareWindow = window.open(shareLink, '_blank', 'noopener,noreferrer,width=600,height=400');
+      // Handle popup blockers
+      if (!shareWindow) {
+        window.location.href = shareLink;
+      }
     }
   }
 
