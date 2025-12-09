@@ -25,6 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
 
+  // Dark mode toggle elements
+  const darkModeToggle = document.getElementById("dark-mode-toggle");
+  const darkModeIcon = document.getElementById("dark-mode-icon");
+
   // Activity categories with corresponding colors
   const activityTypes = {
     sports: { label: "Sports", color: "#e8f5e9", textColor: "#2e7d32" },
@@ -253,6 +257,50 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("password").value;
     await login(username, password);
   });
+
+  // Dark mode functionality
+  function updateDarkModeIcon() {
+    // Update icon based on current mode
+    if (document.body.classList.contains("dark-mode")) {
+      darkModeIcon.textContent = "☀️";
+    } else {
+      darkModeIcon.textContent = "🌙";
+    }
+  }
+
+  function initializeDarkMode() {
+    // Check if user has a saved preference
+    const savedDarkMode = localStorage.getItem("darkMode");
+    
+    // Default to light mode for first-time users (when savedDarkMode is null)
+    if (savedDarkMode === "enabled") {
+      document.body.classList.add("dark-mode");
+    } else {
+      // Light mode (default or explicitly disabled)
+      document.body.classList.remove("dark-mode");
+    }
+    
+    updateDarkModeIcon();
+  }
+
+  function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+    
+    // Save preference to localStorage
+    if (document.body.classList.contains("dark-mode")) {
+      localStorage.setItem("darkMode", "enabled");
+    } else {
+      localStorage.removeItem("darkMode"); // Remove item when disabled (default is light mode)
+    }
+    
+    updateDarkModeIcon();
+  }
+
+  // Event listener for dark mode toggle
+  darkModeToggle.addEventListener("click", toggleDarkMode);
+
+  // Initialize dark mode on page load
+  initializeDarkMode();
 
   // Show loading skeletons
   function showLoadingSkeletons() {
