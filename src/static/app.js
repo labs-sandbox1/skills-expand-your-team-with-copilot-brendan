@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // View mode elements
   const filterViewBtn = document.getElementById("filter-view-btn");
   const groupViewBtn = document.getElementById("group-view-btn");
-  const categoryFiltersContainer = document.getElementById("category-filters");
+  const categoryFilterContainer = document.getElementById("category-filter-container");
 
   // Authentication elements
   const loginButton = document.getElementById("login-button");
@@ -498,8 +498,8 @@ document.addEventListener("DOMContentLoaded", () => {
       groupedByCategory[activityType].push({ name, details });
     });
 
-    // Define category display order
-    const categoryOrder = ["sports", "arts", "academic", "community", "technology"];
+    // Define category display order (consistent with activityTypes keys)
+    const categoryOrder = Object.keys(activityTypes);
     
     // Display each category group
     categoryOrder.forEach((category) => {
@@ -513,7 +513,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Create category header
         const groupHeader = document.createElement("div");
         groupHeader.className = "category-group-header";
-        groupHeader.style.background = `linear-gradient(145deg, ${categoryInfo.color}, ${categoryInfo.textColor})`;
+        groupHeader.style.backgroundColor = categoryInfo.textColor;
         groupHeader.innerHTML = `
           <span>${categoryInfo.label}</span>
           <span class="category-group-count">${groupedByCategory[category].length}</span>
@@ -678,7 +678,7 @@ document.addEventListener("DOMContentLoaded", () => {
       viewMode = "filter";
       filterViewBtn.classList.add("active");
       groupViewBtn.classList.remove("active");
-      categoryFiltersContainer.parentElement.classList.remove("group-mode");
+      categoryFilterContainer.classList.remove("group-mode");
       displayFilteredActivities();
     }
   });
@@ -688,7 +688,7 @@ document.addEventListener("DOMContentLoaded", () => {
       viewMode = "group";
       groupViewBtn.classList.add("active");
       filterViewBtn.classList.remove("active");
-      categoryFiltersContainer.parentElement.classList.add("group-mode");
+      categoryFilterContainer.classList.add("group-mode");
       displayFilteredActivities();
     }
   });
