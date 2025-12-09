@@ -14,6 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoryFilters = document.querySelectorAll(".category-filter");
   const dayFilters = document.querySelectorAll(".day-filter");
   const timeFilters = document.querySelectorAll(".time-filter");
+  
+  // View mode elements
+  const filterViewBtn = document.getElementById("filter-view-btn");
+  const groupViewBtn = document.getElementById("group-view-btn");
+  const categoryFiltersContainer = document.getElementById("category-filters");
 
   // Authentication elements
   const loginButton = document.getElementById("login-button");
@@ -40,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  let viewMode = "filter"; // "filter" or "group"
 
   // Authentication state
   let currentUser = null;
@@ -420,8 +426,8 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.entries(allActivities).forEach(([name, details]) => {
       const activityType = getActivityType(name, details.description);
 
-      // Apply category filter
-      if (currentFilter !== "all" && activityType !== currentFilter) {
+      // Apply category filter (only in filter mode)
+      if (viewMode === "filter" && currentFilter !== "all" && activityType !== currentFilter) {
         return;
       }
 
@@ -466,14 +472,72 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Display filtered activities
+    // Display activities based on view mode
+    if (viewMode === "group") {
+      displayGroupedActivities(filteredActivities);
+    } else {
+      // Display filtered activities in regular grid view
+      Object.entries(filteredActivities).forEach(([name, details]) => {
+        renderActivityCard(name, details);
+      });
+    }
+  }
+
+  // Function to display activities grouped by category
+  function displayGroupedActivities(filteredActivities) {
+    // Group activities by category
+    const groupedByCategory = {};
+    
     Object.entries(filteredActivities).forEach(([name, details]) => {
-      renderActivityCard(name, details);
+      const activityType = getActivityType(name, details.description);
+      
+      if (!groupedByCategory[activityType]) {
+        groupedByCategory[activityType] = [];
+      }
+      
+      groupedByCategory[activityType].push({ name, details });
+    });
+
+    // Define category display order
+    const categoryOrder = ["sports", "arts", "academic", "community", "technology"];
+    
+    // Display each category group
+    categoryOrder.forEach((category) => {
+      if (groupedByCategory[category] && groupedByCategory[category].length > 0) {
+        const categoryInfo = activityTypes[category];
+        
+        // Create category group container
+        const groupContainer = document.createElement("div");
+        groupContainer.className = "category-group";
+        
+        // Create category header
+        const groupHeader = document.createElement("div");
+        groupHeader.className = "category-group-header";
+        groupHeader.style.background = `linear-gradient(145deg, ${categoryInfo.color}, ${categoryInfo.textColor})`;
+        groupHeader.innerHTML = `
+          <span>${categoryInfo.label}</span>
+          <span class="category-group-count">${groupedByCategory[category].length}</span>
+        `;
+        
+        // Create activities container for this category
+        const groupActivities = document.createElement("div");
+        groupActivities.className = "category-group-activities";
+        
+        // Add all activities in this category
+        groupedByCategory[category].forEach(({ name, details }) => {
+          const activityCard = createActivityCardElement(name, details);
+          groupActivities.appendChild(activityCard);
+        });
+        
+        groupContainer.appendChild(groupHeader);
+        groupContainer.appendChild(groupActivities);
+        activitiesList.appendChild(groupContainer);
+      }
     });
   }
 
-  // Function to render a single activity card
-  function renderActivityCard(name, details) {
+  // Helper function to create activity card element without appending to list
+  function createActivityCardElement(name, details) {
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
 
@@ -587,6 +651,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    return activityCard;
+  }
+
+  // Function to render a single activity card
+  function renderActivityCard(name, details) {
+    const activityCard = createActivityCardElement(name, details);
     activitiesList.appendChild(activityCard);
   }
 
@@ -602,9 +672,35 @@ document.addEventListener("DOMContentLoaded", () => {
     displayFilteredActivities();
   });
 
+  // Add event listeners to view toggle buttons
+  filterViewBtn.addEventListener("click", () => {
+    if (viewMode !== "filter") {
+      viewMode = "filter";
+      filterViewBtn.classList.add("active");
+      groupViewBtn.classList.remove("active");
+      categoryFiltersContainer.parentElement.classList.remove("group-mode");
+      displayFilteredActivities();
+    }
+  });
+
+  groupViewBtn.addEventListener("click", () => {
+    if (viewMode !== "group") {
+      viewMode = "group";
+      groupViewBtn.classList.add("active");
+      filterViewBtn.classList.remove("active");
+      categoryFiltersContainer.parentElement.classList.add("group-mode");
+      displayFilteredActivities();
+    }
+  });
+
   // Add event listeners to category filter buttons
   categoryFilters.forEach((button) => {
     button.addEventListener("click", () => {
+      // Only work in filter mode
+      if (viewMode !== "filter") {
+        return;
+      }
+
       // Update active class
       categoryFilters.forEach((btn) => btn.classList.remove("active"));
       button.classList.add("active");

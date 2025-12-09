@@ -535,6 +535,39 @@ footer {
   font-weight: 600;
   color: var(--text-primary);
   font-size: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* View toggle buttons */
+.view-toggle {
+  display: flex;
+  gap: 3px;
+  background-color: var(--background);
+  border-radius: 15px;
+  padding: 2px;
+}
+
+.view-toggle-btn {
+  background-color: transparent;
+  border: none;
+  color: var(--text-primary);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.view-toggle-btn.active {
+  background-color: var(--primary);
+  color: white;
+}
+
+.view-toggle-btn:hover:not(.active) {
+  background-color: var(--border);
 }
 
 .category-filters,
@@ -663,4 +696,42 @@ footer {
 
 #logout-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Group by category view */
+.category-group {
+  margin-bottom: 20px;
+}
+
+.category-group-header {
+  background: linear-gradient(145deg, var(--primary), var(--primary-light));
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.category-group-count {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: normal;
+}
+
+.category-group-activities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+/* Hide category filters when in group mode */
+.group-mode .category-filters {
+  display: none;
 }
