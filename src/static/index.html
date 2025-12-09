@@ -42,8 +42,18 @@
               </button>
             </div>
 
-            <div class="filter-container">
-              <div class="filter-label">Filter by category:</div>
+            <div class="filter-container" id="category-filter-container">
+              <div class="filter-label">
+                <span>Category View:</span>
+                <div class="view-toggle">
+                  <button id="filter-view-btn" class="view-toggle-btn active" data-view="filter">
+                    Filter
+                  </button>
+                  <button id="group-view-btn" class="view-toggle-btn" data-view="group">
+                    Group By
+                  </button>
+                </div>
+              </div>
               <div class="category-filters" id="category-filters">
                 <button class="category-filter active" data-category="all">
                   All
