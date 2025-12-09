@@ -38,6 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
     community: { label: "Community", color: "#fff3e0", textColor: "#e65100" },
     technology: { label: "Technology", color: "#e8eaf6", textColor: "#3949ab" },
   };
+  
+  // Cache category order to avoid repeated Object.keys() calls
+  const categoryOrder = Object.keys(activityTypes);
 
   // State for activities and filters
   let allActivities = {};
@@ -497,9 +500,6 @@ document.addEventListener("DOMContentLoaded", () => {
       
       groupedByCategory[activityType].push({ name, details });
     });
-
-    // Define category display order (consistent with activityTypes keys)
-    const categoryOrder = Object.keys(activityTypes);
     
     // Display each category group
     categoryOrder.forEach((category) => {
@@ -522,11 +522,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const groupActivities = document.createElement("div");
         groupActivities.className = "category-group-activities";
         
-        // Add all activities in this category
+        // Use DocumentFragment to batch DOM operations and avoid layout thrashing
+        const fragment = document.createDocumentFragment();
         groupedByCategory[category].forEach(({ name, details }) => {
           const activityCard = createActivityCardElement(name, details);
-          groupActivities.appendChild(activityCard);
+          fragment.appendChild(activityCard);
         });
+        groupActivities.appendChild(fragment);
         
         groupContainer.appendChild(groupHeader);
         groupContainer.appendChild(groupActivities);
