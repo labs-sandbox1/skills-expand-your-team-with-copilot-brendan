@@ -263,10 +263,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Check if user has a saved preference
     const savedDarkMode = localStorage.getItem("darkMode");
     
+    // Default to light mode for first-time users (when savedDarkMode is null)
     if (savedDarkMode === "enabled") {
       document.body.classList.add("dark-mode");
       darkModeIcon.textContent = "☀️";
     } else {
+      // Light mode (default or explicitly disabled)
+      document.body.classList.remove("dark-mode");
       darkModeIcon.textContent = "🌙";
     }
   }
