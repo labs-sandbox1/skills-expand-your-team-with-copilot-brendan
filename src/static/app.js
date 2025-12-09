@@ -259,6 +259,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Dark mode functionality
+  function updateDarkModeIcon() {
+    // Update icon based on current mode
+    if (document.body.classList.contains("dark-mode")) {
+      darkModeIcon.textContent = "☀️";
+    } else {
+      darkModeIcon.textContent = "🌙";
+    }
+  }
+
   function initializeDarkMode() {
     // Check if user has a saved preference
     const savedDarkMode = localStorage.getItem("darkMode");
@@ -266,25 +275,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // Default to light mode for first-time users (when savedDarkMode is null)
     if (savedDarkMode === "enabled") {
       document.body.classList.add("dark-mode");
-      darkModeIcon.textContent = "☀️";
     } else {
       // Light mode (default or explicitly disabled)
       document.body.classList.remove("dark-mode");
-      darkModeIcon.textContent = "🌙";
     }
+    
+    updateDarkModeIcon();
   }
 
   function toggleDarkMode() {
     document.body.classList.toggle("dark-mode");
     
-    // Update icon based on current mode
+    // Save preference to localStorage
     if (document.body.classList.contains("dark-mode")) {
-      darkModeIcon.textContent = "☀️";
       localStorage.setItem("darkMode", "enabled");
     } else {
-      darkModeIcon.textContent = "🌙";
-      localStorage.setItem("darkMode", "disabled");
+      localStorage.removeItem("darkMode"); // Remove item when disabled (default is light mode)
     }
+    
+    updateDarkModeIcon();
   }
 
   // Event listener for dark mode toggle
